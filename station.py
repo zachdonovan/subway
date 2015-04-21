@@ -1,11 +1,10 @@
 class SubwayStation(object):
     def __init__(self, *args, **kwargs):
-        self._lines = []
         self._neighbors = []
         self._name = ""
 
-    def add_line(self, line):
-        self._lines.append(line)
+    def __repr__(self):
+        return self._name
 
     def add_neighbor(self, neighbor, distance=None):
         self._neighbors.append((neighbor, distance))
@@ -18,4 +17,3 @@ class SubwayStation(object):
 
     def get_name(self):
         return self._name
-

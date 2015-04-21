@@ -1,6 +1,5 @@
 import pytest, copy, collections
 from subway import SubwaySystem
-from line import SubwayLine
 from station import SubwayStation
 
 # add_train_line requires a name
@@ -36,16 +35,11 @@ def test_subway_system_stations_are_unique():
     subway_system.add_train_line(['14th'], 'E')
     assert len(subway_system._stations) == len(old_subway_system_stations)
 
-
 def test_subway_system_add_new_train_line():
     subway_system = SubwaySystem()
     assert len(subway_system.stations_in_system()) == 0
     subway_system.add_train_line(['14th'], '1')
     assert len(subway_system.stations_in_system()) > 0
-
-def test_subway_system_has_lines():
-    subway_system = SubwaySystem()
-    assert subway_system._lines is not None
 
 def test_subway_system_has_stations():
     subway_system = SubwaySystem()
