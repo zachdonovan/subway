@@ -11,7 +11,7 @@ class SubwayStation(object):
         self._neighbors[neighbor] = min(distances)
 
     def get_neighbors(self):
-        return [ (k,v) for k, v in self._neighbors.items() ]
+        return self._neighbors.items()
 
     def set_name(self, station_name):
         self._name = station_name
