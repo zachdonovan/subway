@@ -68,6 +68,17 @@ def test_take_train_survives_cycles():
     subway_system.add_train_line(stops=["West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"], name="F")
     assert subway_system.take_train(**{"from": "14th", "to": "East Broadway"}) == ["14th", "West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"]
 
+def test_take_train_respects_time():
+    subway_system = SubwaySystem()
+    subway_system.add_train_line(stops=["West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"], name="F",
+                                time_between_stations=[("West 4th", "Broadway-Lafayette", 2),
+                                                       ("Broadway-Lafayette", "2nd Avenue", 2),
+                                                       ("2nd Avenue", "Easy Broadway", 2)])
+    subway_system.add_train_line(stops=["West 4th", "THE ALTERNATE DIMENSION",  "East Broadway"], name="X",
+                                time_between_stations=[("West 4th", "2nd Avenue", 100),
+                                                       ("2nd Avenue", "Easy Broadway", 100)])
+    assert subway_system.take_train(**{"from": "West 4th", "to": "East Broadway"}) == ["West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"]
+
 #####################
 # internal stations data model
 #####################
@@ -84,3 +95,9 @@ def test_subway_system_stations_are_unique():
     assert len(subway_system._stations) == len(old_subway_system_stations)
     subway_system.add_train_line(['23rd'], '6')
     assert len(subway_system._stations) > len(old_subway_system_stations)
+
+def test_subway_system_prefers_dijkstra():
+    subway_system = SubwaySystem()
+    assert subway_system._supports_time
+    subway_system.add_train_line(['14th'], 'E')
+    assert not subway_system._supports_time
