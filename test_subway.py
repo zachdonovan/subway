@@ -73,10 +73,10 @@ def test_take_train_respects_time():
     subway_system.add_train_line(stops=["West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"], name="F",
                                 time_between_stations=[("West 4th", "Broadway-Lafayette", 2),
                                                        ("Broadway-Lafayette", "2nd Avenue", 2),
-                                                       ("2nd Avenue", "Easy Broadway", 2)])
+                                                       ("2nd Avenue", "East Broadway", 2)])
     subway_system.add_train_line(stops=["West 4th", "THE ALTERNATE DIMENSION",  "East Broadway"], name="X",
                                 time_between_stations=[("West 4th", "2nd Avenue", 100),
-                                                       ("2nd Avenue", "Easy Broadway", 100)])
+                                                       ("2nd Avenue", "East Broadway", 100)])
     assert subway_system.take_train(**{"from": "West 4th", "to": "East Broadway"}) == ["West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"]
 
 #####################

@@ -37,7 +37,7 @@ class SubwaySystem(object):
         assert start_station, "take_train requires an origin point within the existing subway system"
         assert end_station, "take_train requires an end point within the existing subway system"
 
-        return self._breadth_first_search(origin, start_station, destination, end_station)
+        return self._dijkstra(origin, start_station, destination, end_station)
 
 
     def _breadth_first_search(self, origin, start_station, destination, end_station):
@@ -80,6 +80,7 @@ class SubwaySystem(object):
                 return path_to_station, dist_sum                              # return path to this station and the distance
 
             for tup in next_station.get_neighbors():                          # get adjacent stations for exploration
+                print('checking {}'.format(tup))
                 neighbor, dist = tup
                 alt = distance.get(neighbor, None)
                 if alt is None or (dist + dist_sum) > alt:                    # unless we've already found a better path

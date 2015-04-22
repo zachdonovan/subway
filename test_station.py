@@ -27,5 +27,3 @@ def test_set_neighbors_stores_shortest_distance():
     assert s.get_neighbors() == [('34th St', 7)]
     s.set_neighbor('34th St', 9)
     assert s.get_neighbors() == [('34th St', 7)]
-    s.set_neighbor('34th St')
-    assert s.get_neighbors() == [('34th St', 7)]
