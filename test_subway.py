@@ -37,36 +37,37 @@ def test_subway_system_add_new_train_line():
 # take_train contract
 #####################
 
-def test_take_train_requires_from():
+def test_take_train_requires_origin():
     subway_system = SubwaySystem()
-    with pytest.raises(AssertionError):
-        subway_system.take_train(to="125th")
+    with pytest.raises(TypeError):
+        subway_system.take_train(destination="125th")
 
-def test_take_train_requires_to():
+def test_take_train_requires_destination():
     subway_system = SubwaySystem()
-    with pytest.raises(AssertionError):
-        subway_system.take_train(**{'from': "125th"})
+    with pytest.raises(TypeError):
+        subway_system.take_train(origin="125th")
 
 def test_take_train_nonsense_trip_returns_empty_path():
     subway_system = SubwaySystem()
     with pytest.raises(AssertionError):
-        subway_system.take_train(**{"from": "14th", "to": "Franklin St"}) == []
+        subway_system.take_train(origin="14th", destination = "Franklin St")
     subway_system.add_train_line(stops=["West 4th", "14th", "34th", "42nd - Port Authority"], name="A")
     subway_system.add_train_line(stops=["Chambers St", "Franklin St", "Canal St", "Houston St"], name="1")
-    assert subway_system.take_train(**{"from": "14th", "to": "Franklin St"}) == []
+    assert subway_system.take_train(origin="14th", destination="Franklin St") == ([], 0)
 
 def test_take_train_supports_transfers():
     subway_system = SubwaySystem()
     subway_system.add_train_line(stops=["West 4th", "14th", "34th", "42nd - Port Authority"], name="A")
     subway_system.add_train_line(stops=["West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"], name="F")
-    assert subway_system.take_train(**{"from": "14th", "to": "East Broadway"}) == ["14th", "West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"]
+    assert subway_system.take_train(origin="14th", destination="East Broadway") == (["14th", "West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"], 4)
 
 def test_take_train_survives_cycles():
     subway_system = SubwaySystem()
     subway_system.add_train_line(stops=["West 4th", "14th", "34th", "42nd - Port Authority"], name="A")
     subway_system.add_train_line(stops=["Broadway-Lafayette", "8th St", "14th"], name="6")
     subway_system.add_train_line(stops=["West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"], name="F")
-    assert subway_system.take_train(**{"from": "14th", "to": "East Broadway"}) == ["14th", "West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"]
+    assert subway_system.take_train(origin="14th", destination= "East Broadway") in [(["14th", "West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"], 4),
+                                                                                     (["14th", "8th St", "Broadway-Lafayette", "2nd Avenue", "East Broadway"], 4)]
 
 def test_take_train_respects_time():
     subway_system = SubwaySystem()
@@ -75,9 +76,9 @@ def test_take_train_respects_time():
                                                        ("Broadway-Lafayette", "2nd Avenue", 2),
                                                        ("2nd Avenue", "East Broadway", 2)])
     subway_system.add_train_line(stops=["West 4th", "THE ALTERNATE DIMENSION",  "East Broadway"], name="X",
-                                time_between_stations=[("West 4th", "2nd Avenue", 100),
-                                                       ("2nd Avenue", "East Broadway", 100)])
-    assert subway_system.take_train(**{"from": "West 4th", "to": "East Broadway"}) == ["West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"]
+                                time_between_stations=[("West 4th", "THE ALTERNATE DIMENSION", 100),
+                                                       ("THE ALTERNATE DIMENSION", "East Broadway", 100)])
+    assert subway_system.take_train(origin="West 4th", destination="East Broadway") == (["West 4th", "Broadway-Lafayette", "2nd Avenue", "East Broadway"], 6)
 
 #####################
 # internal stations data model
