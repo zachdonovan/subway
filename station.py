@@ -6,9 +6,9 @@ class SubwayStation(object):
     def __repr__(self):
         return self._name
 
-    def set_neighbor(self, neighbor, distance=None):
-        distances = filter(lambda dist: dist is not None, [self._neighbors.get(neighbor, None), distance])
-        self._neighbors[neighbor] = min(distances) if distances else None
+    def set_neighbor(self, neighbor, distance=1):
+        distances = filter(lambda val: val is not None, [self._neighbors.get(neighbor, None), distance])
+        self._neighbors[neighbor] = min(distances)
 
     def get_neighbors(self):
         return [ (k,v) for k, v in self._neighbors.items() ]

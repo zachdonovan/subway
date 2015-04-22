@@ -15,14 +15,12 @@ def test_use_name_as_repr():
 def test_set_neighbors_accepts_optional_distance():
     s = SubwayStation()
     s.set_neighbor('34th St - Penn Station')
-    assert s.get_neighbors() == [('34th St - Penn Station', None)]
+    assert s.get_neighbors() == [('34th St - Penn Station', 1)]
     s.set_neighbor('23rd St', 4)
-    assert set(s.get_neighbors()) == set([('34th St - Penn Station', None), ('23rd St', 4)])
+    assert set(s.get_neighbors()) == set([('34th St - Penn Station', 1), ('23rd St', 4)])
 
 def test_set_neighbors_stores_shortest_distance():
     s = SubwayStation()
-    s.set_neighbor('34th St')
-    assert s.get_neighbors() == [('34th St', None)]
     s.set_neighbor('34th St', 12)
     assert s.get_neighbors() == [('34th St', 12)]
     s.set_neighbor('34th St', 7)

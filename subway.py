@@ -4,22 +4,25 @@ from station import SubwayStation
 class SubwaySystem(object):
     def __init__(self, *args, **kwargs):
         self._stations = {}
-        self._supports_time = True
 
     def add_train_line(self, stops, name, time_between_stations=None):
         assert isinstance(stops, list)
         assert len(stops)
 
-        if time_between_stations is None:
-            self._supports_time = False
-
-        for index, stop in enumerate(stops):
-          neighbors = []
-          if index > 0:
-              neighbors.append(stops[index-1])
-          if index < len(stops) - 1:
-              neighbors.append(stops[index+1])
-          self._add_station(stop, neighbors)
+        if time_between_stations is not None:
+            for start, end, dist in time_between_stations:
+                print('adding {}'.format(start))
+                self._add_station(start, [(end, dist)])
+                print('adding {}'.format(end))
+                self._add_station(end, [(start, dist)])
+        else:
+            for index, stop in enumerate(stops):
+                neighbors = []
+                if index > 0:
+                    neighbors.append((stops[index-1], 1))
+                if index < len(stops) - 1:
+                    neighbors.append((stops[index+1], 1))
+                self._add_station(stop, neighbors)
 
     def take_train(self, **kwargs):
         # this nonsense is required to support from as a keyword argument
@@ -34,14 +37,10 @@ class SubwaySystem(object):
         assert start_station, "take_train requires an origin point within the existing subway system"
         assert end_station, "take_train requires an end point within the existing subway system"
 
-        if self._supports_time:
-            return self._dijkstra(origin, start_station, destination, end_station)
-        else:
-            return self._breadth_first_search(origin, start_station, destination, end_station)
+        return self._breadth_first_search(origin, start_station, destination, end_station)
 
 
     def _breadth_first_search(self, origin, start_station, destination, end_station):
-        print("BREADTH FIRST")
         queue = [start_station]                                               # prime the queue with the first station
         paths = { origin: [] }                                                # insert the start station into the list of candidate paths
         discovered = { origin: True }                                         # mark the start station as discovered
@@ -90,10 +89,10 @@ class SubwaySystem(object):
 
         return []                                                             # fail case - no route found
         
-    def _add_station(self, station_name, neighbors):
+    def _add_station(self, station_name, neighbor_tuples):
         station = self._stations.get(station_name, SubwayStation(name=station_name))
-        for neighbor in neighbors:
-            station.set_neighbor(neighbor)
+        for neighbor, dist in neighbor_tuples:
+            station.set_neighbor(neighbor, dist)
         self._stations[station_name] = station
 
     def stations_in_system(self):

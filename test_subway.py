@@ -95,9 +95,3 @@ def test_subway_system_stations_are_unique():
     assert len(subway_system._stations) == len(old_subway_system_stations)
     subway_system.add_train_line(['23rd'], '6')
     assert len(subway_system._stations) > len(old_subway_system_stations)
-
-def test_subway_system_prefers_dijkstra():
-    subway_system = SubwaySystem()
-    assert subway_system._supports_time
-    subway_system.add_train_line(['14th'], 'E')
-    assert not subway_system._supports_time
