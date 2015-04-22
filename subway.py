@@ -1,6 +1,5 @@
+import Queue
 from station import SubwayStation
-
-MAX_DISTANCE = 1000 # to replace with max num
 
 class SubwaySystem(object):
     def __init__(self, *args, **kwargs):
@@ -67,27 +66,27 @@ class SubwaySystem(object):
         return []                                                             # fail case - no route found
 
     def _dijkstra(self, origin, start_station, destination, end_station):
-        print("DIJKSTRA")
-        queue = [start_station]                                               # prime the queue with the first station
+        queue = Queue.PriorityQueue()                                         # instantiate an honest-to-god priority queue!
+        queue.put((0, start_station), False)                                  # prime the priority queue with the first station
         paths = { origin: [] }                                                # insert the start station into the list of candidate paths
-        discovered = { origin: True }                                         # mark the start station as discovered
         distance = { origin: 0 }                                              # distance from origin to itself is zero
 
-        while len(queue):                                                     # while we have unvisited stations
-            next_station = queue.pop()                                        # visit the next station
+        while not queue.empty():                                              # while we have unvisited stations
+            next_dist, next_station = queue.get(False)                        # visit the next station
             next_station_name = next_station.get_name()                       # extract the station's unique identifier
 
-            discovered[next_station_name] = True                              # don't visit this station again
+            dist_sum = distance[next_station_name]                            # get the recorded distance to this station
             path_to_station = paths[next_station_name] + [next_station_name]  # add this station to the path for all subsequent stations
             if next_station == end_station:                                   # if we're at the destination
-                return path_to_station                                        # return path to this station
+                return path_to_station, dist_sum                              # return path to this station and the distance
 
             for tup in next_station.get_neighbors():                          # get adjacent stations for exploration
-                neighbor, distance = tup
-                if discovered.get(neighbor, False):                           # unless we've already visited them
-                    continue
+                neighbor, dist = tup
+                alt = distance.get(neighbor, None)
+                if alt is None or (dist + dist_sum) > alt:                    # unless we've already found a better path
+                    distance[neighbor] = dist + dist_sum                      # update the best path
                 paths[neighbor] = path_to_station                             # set their paths to match the current station
-                queue.append(self._stations[neighbor])                        # enqueue!
+                queue.put((dist + dist_sum, self._stations[neighbor]), False) # enqueue!
 
         return []                                                             # fail case - no route found
         
