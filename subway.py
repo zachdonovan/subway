@@ -1,4 +1,4 @@
-import Queue
+import heapq as Q
 from station import SubwayStation
 
 class SubwaySystem(object):
@@ -33,14 +33,14 @@ class SubwaySystem(object):
 
 
     def _dijkstra(self, start_station, end_station):
-        queue = Queue.PriorityQueue()                                         # instantiate an honest-to-god priority queue!
-        queue.put((0, start_station), False)                                  # prime the priority queue with the first station
+        queue = []                                                            # instantiate an honest-to-god priority queue!
+        Q.heappush(queue, (0, start_station))                                 # prime the priority queue with the first station
         start_name = start_station.get_name()
         paths = { start_name: [] }                                            # insert the start station into the list of candidate paths
         distance = { start_name: 0 }                                          # distance from origin to itself is zero
 
-        while not queue.empty():                                              # while we have unvisited stations
-            next_dist, next_station = queue.get(False)                        # visit the next station
+        while len(queue):                                                     # while we have unvisited stations
+            next_dist, next_station = Q.heappop(queue)                        # visit the next station
             next_station_name = next_station.get_name()                       # extract the station's unique identifier
 
             dist_sum = distance[next_station_name]                            # get the recorded distance to this station
@@ -54,8 +54,9 @@ class SubwaySystem(object):
                 if alt is None or (dist + dist_sum) < alt:                    # unless we've already found a better path
                     distance[neighbor] = dist + dist_sum                      # update the best path
                     paths[neighbor] = path_to_station                         # set their paths to match the current station
-                    queue.put((dist + dist_sum, 
-                      self._stations[neighbor]), False)                       # enqueue!
+                    Q.heappush(queue,(dist + dist_sum, 
+                      self._stations[neighbor]))                              # enqueue!
+
 
         return ([], 0)                                                        # fail case - no route found
         
