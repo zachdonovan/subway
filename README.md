@@ -20,7 +20,7 @@ To see the library in action:
 
 Running the tests is slightly more involved.
 
-```
+```bash
 ~$ cd ~
 ~$ pyvenv ~/subway-demo/
 ~$ source ~/subway-demo/bin/activate
